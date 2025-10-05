@@ -1,30 +1,33 @@
-// ===== MUNDO MÁGICO - PLAYER =====
+const player = document.getElementById("player");
+let posX = window.innerWidth / 2 - 25;
+let posY = 0;
+let isJumping = false;
+const speed = 10;
+const jumpHeight = 150;
 
-class Player {
-  constructor(x, y, color = "#ffcc00") {
-    this.x = x;
-    this.y = y;
-    this.size = 30;
-    this.color = color;
-    this.speed = 5;
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") posX -= speed;
+  if (e.key === "ArrowRight") posX += speed;
+  if (e.key === " " && !isJumping) jump();
 
-    // teclas pressionadas
-    this.keys = {};
-    window.addEventListener("keydown", e => this.keys[e.key] = true);
-    window.addEventListener("keyup", e => this.keys[e.key] = false);
-  }
+  player.style.left = posX + "px";
+});
 
-  move() {
-    if (this.keys["ArrowUp"] || this.keys["w"]) this.y -= this.speed;
-    if (this.keys["ArrowDown"] || this.keys["s"]) this.y += this.speed;
-    if (this.keys["ArrowLeft"] || this.keys["a"]) this.x -= this.speed;
-    if (this.keys["ArrowRight"] || this.keys["d"]) this.x += this.speed;
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
-  }
+function jump() {
+  isJumping = true;
+  let up = setInterval(() => {
+    if (posY >= jumpHeight) {
+      clearInterval(up);
+      let down = setInterval(() => {
+        if (posY <= 0) {
+          clearInterval(down);
+          isJumping = false;
+        }
+        posY -= 10;
+        player.style.bottom = posY + "px";
+      }, 20);
+    }
+    posY += 10;
+    player.style.bottom = posY + "px";
+  }, 20);
 }
